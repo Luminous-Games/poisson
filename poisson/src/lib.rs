@@ -59,7 +59,7 @@ use rand::Rng;
 use num_traits::Float as NumFloat;
 use num_traits::{NumCast, Zero};
 
-use alga::general::AbstractField;
+use alga::general::{AbstractField, RealField};
 use alga::linear::{FiniteDimVectorSpace, NormedSpace};
 
 #[macro_use]
@@ -75,20 +75,21 @@ pub mod algorithm;
 mod utils;
 
 /// Describes what floats are.
-pub trait Float: NumFloat + AbstractField + AddAssign + SubAssign + MulAssign + DivAssign {
+pub trait Float: NumFloat + AddAssign + SubAssign + MulAssign + DivAssign + RealField {
     /// Casts usize to float.
     fn cast(n: usize) -> Self {
         NumCast::from(n).expect("Casting usize to float should always succeed.")
     }
 }
-impl<T> Float for T where T: NumFloat + AbstractField + AddAssign + SubAssign + MulAssign + DivAssign
+impl<T> Float for T where T: NumFloat + AddAssign + SubAssign + MulAssign + DivAssign + RealField
 {}
+
 
 /// Describes what vectors are.
 pub trait Vector<F>:
     Zero
     + FiniteDimVectorSpace<Field = F>
-    + NormedSpace<Field = F>
+    + NormedSpace<RealField = F, ComplexField=F, Field=F>
     + Index<usize>
     + IndexMut<usize>
     + Clone
@@ -101,10 +102,10 @@ where
     F: Float,
     T: Zero
         + FiniteDimVectorSpace<Field = F>
-        + NormedSpace<Field = F>
+        + NormedSpace<RealField = F, ComplexField=F, Field=F>
         + Index<usize>
         + IndexMut<usize>
-        + Clone
+        + Clone,
 {
 }
 
